@@ -26,7 +26,7 @@ import java.util.List;
     /* Please, use this constants for the queries */
     private final String QUERY_ORDER_BY = "SELECT * FROM trabajador order by desde";
     private final String QUERY_BY_DNI = "Select * from trabajador where dni=?";
-    private final String UPDATE_BY_ID = "update trabajador set id=?,name=?,dni=?,from=? where id=?";
+    private final String UPDATE_BY_ID = "update trabajador set nombre=?,dni=?,desde=? where id=?";
 
     @Override
     public Worker save(Worker worker) {
@@ -44,22 +44,21 @@ import java.util.List;
         Worker out = null;
 
         /* Make implementation here ...  */
-        if (worker != null) {
+
             try (PreparedStatement pst = JDBCUtils.getConn().prepareStatement(UPDATE_BY_ID)) {
 
                 log.info(worker.toString());
-                pst.setLong(1, worker.getId());
-                pst.setString(2, worker.getName());
-                pst.setString(3, worker.getDni());
-                var fecha=JDBCUtils.dateUtilToSQL(worker.getFrom());
-                pst.setDate(4, fecha);
-                pst.setLong(5,worker.getId());
-
-
+                pst.setString(1, worker.getName());
+                pst.setString(2, worker.getDni());
+                pst.setDate(3, JDBCUtils.dateUtilToSQL(worker.getFrom()));
+                pst.setLong(4,worker.getId());
+                int fila=pst.executeUpdate();
+                if (fila>0){
+                    out=worker;
+                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }
             return out;
         }
 
