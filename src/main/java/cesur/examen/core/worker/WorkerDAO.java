@@ -8,11 +8,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 /**
  * EXAMEN DE ACCESO A DATOS
  * Diciembre 2023
  *
- * Nombre del alumno:
+ * Nombre del alumno: Carmen Garcia Robles
  * Fecha:
  *
  * No se permite escribir en consola desde las clases DAO, Service y Utils usando System.out.
@@ -22,9 +24,9 @@ import java.util.List;
 @Log public class WorkerDAO implements DAO<Worker> {
 
     /* Please, use this constants for the queries */
-    private final String QUERY_ORDER_BY = "";
+    private final String QUERY_ORDER_BY = "SELECT * FROM trabajador order by desde";
     private final String QUERY_BY_DNI = "Select * from trabajador where dni=?";
-    private final String UPDATE_BY_ID = "";
+    private final String UPDATE_BY_ID = "update trabajador set id=?,name=?,dni=?,from=? where id=?";
 
     @Override
     public Worker save(Worker worker) {
@@ -42,9 +44,24 @@ import java.util.List;
         Worker out = null;
 
         /* Make implementation here ...  */
+        if (worker != null) {
+            try (PreparedStatement pst = JDBCUtils.getConn().prepareStatement(UPDATE_BY_ID)) {
 
-        return out;
-    }
+                log.info(worker.toString());
+                pst.setLong(1, worker.getId());
+                pst.setString(2, worker.getName());
+                pst.setString(3, worker.getDni());
+                var fecha=JDBCUtils.dateUtilToSQL(worker.getFrom());
+                pst.setDate(4, fecha);
+                pst.setLong(5,worker.getId());
+
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+            return out;
+        }
 
     @Override
     public boolean remove(Worker worker) {
@@ -104,7 +121,21 @@ import java.util.List;
         ArrayList<Worker> out = new ArrayList<>(0);
 
         /* Make implementation here ...  */
+        try (PreparedStatement ps = JDBCUtils.getConn().prepareStatement(QUERY_ORDER_BY)) {
 
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Worker worker = new Worker();
+                worker.setId(rs.getLong("id"));
+                worker.setName(rs.getString("nombre"));
+                worker.setDni(rs.getString("dni"));
+                worker.setFrom(rs.getDate("desde"));
+                out.add(worker);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return out;
     }
 }

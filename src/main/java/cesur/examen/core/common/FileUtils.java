@@ -11,8 +11,8 @@ import java.util.List;
  * EXAMEN DE ACCESO A DATOS
  * Diciembre 2023
  *
- * Nombre del alumno:
- * Fecha:
+ * Nombre del alumno: Carmen Garcia Robles
+ * Fecha: 11/12/2023
  *
  * No se permite escribir en consola desde las clases DAO, Service y Utils usando System.out.
  * En su lugar, usa log.info(), log.warning() y log.severe() para mostrar información interna
@@ -23,17 +23,18 @@ import java.util.List;
 public class FileUtils {
 
     public static void toCSV(String fileName, List<Worker> workers) {
-        throw new RuntimeException("Not implemented yet!");
+       // throw new RuntimeException("Not implemented yet!");
 
-        /*
-        Uncomment and implement body method!...
 
-        try (...) {
+       // Uncomment and implement body method!...
 
+        try (FileWriter writer = new FileWriter(fileName)) {
+            for (Worker worker : workers) {
+                writer.write(worker.getId() + "," + worker.getName() + "," + worker.getDni() + "," + worker.getFrom() + "\n");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        */
     }
 }

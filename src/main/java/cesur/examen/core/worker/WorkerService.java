@@ -1,5 +1,10 @@
 package cesur.examen.core.worker;
 
+import cesur.examen.core.common.JDBCUtils;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -27,11 +32,17 @@ public class WorkerService {
     Remember Date().
     Returns the new updated worker, null if fails or dni doesn't exist.
     */
-    public static Worker renovateWorker(String dni){
+    public static Worker renovateWorker(String dni) {
         Worker out = null;
-
-        /* Make implementation here ...  */
-
-        return out;
+        WorkerDAO workerDAO = new WorkerDAO();
+        out = workerDAO.getWorkerByDNI(dni);
+        /* Make implementation here ... */
+        if (out != null) {
+            out.setFrom(new java.util.Date());
+            workerDAO.update(out);
+            return out;
+        } else {
+            return null;
+        }
     }
 }
